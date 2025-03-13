@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome, {{ user.name }}!</h1>
+    <p>Email: {{ user.email }}</p>
+    <img src="{{ user.picture }}" alt="Profile Picture" width="100">
+    
+    <h2>Your Dashboard</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet, eros in feugiat faucibus, nunc elit viverra nulla, vel facilisis justo ipsum a libero. Integer non leo at dolor tincidunt tristique.</p>
+    
+    <p>Feel free to explore your personalized dashboard and manage your content effortlessly.</p>
+    
+    <br>
+    <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+</div>
+
+</body>
+</html>
