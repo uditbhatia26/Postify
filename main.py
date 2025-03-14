@@ -1,12 +1,30 @@
 from flask import Flask, render_template, redirect, session, url_for
 from authlib.integrations.flask_client import OAuth
 import os
+from config import post_generation_template
+from langchain_core.prompts import PromptTemplate
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
+from langchain_core.tools import Tool
+from langchain.agents import initialize_agent, AgentType
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
+search = DuckDuckGoSearchRun(name='Search')
+tools = [Tool.from_function(name="search_news", func=search.run, description="Search for news articles.")]
+
+llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model="llama3-70b-8192")
+prompt = PromptTemplate(
+    input_variables=['user_input', 'writing_style'],
+    template=post_generation_template,
+    validate_template=True
+)
+
+generation_chain = prompt | llm 
 
 # Google OAuth Config
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -83,6 +101,14 @@ def login():
 def logout():
     session.pop("user", None)
     return redirect("/")
+
+def generate_post(writing_style, user_input):
+    generation_chain.invoke(
+        input={
+            writing_style:writing_style,
+            user_input:user_input
+        }
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
