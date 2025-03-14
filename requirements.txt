@@ -3,3 +3,10 @@ authlib
 dotenv
 requests
 flask_sqlalchemy
+langchain
+langchain_groq
+langchain_openai
+duckduckgo-search 
+langchain_core
+langchain-community
+crewai
