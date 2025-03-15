@@ -1,40 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/assets/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="container">
-    <h1>Welcome, {{ user.name }}!</h1>
-    <p>Email: {{ user.email }}</p>
-    <img src="{{ user.picture }}" alt="Profile Picture" width="100">
-    
-    <h2>Your Dashboard</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet, eros in feugiat faucibus, nunc elit viverra nulla, vel facilisis justo ipsum a libero. Integer non leo at dolor tincidunt tristique.</p>
-    
-    <p>Feel free to explore your personalized dashboard and manage your content effortlessly.</p>
-    
-    <br>
-    <a href="{{ url_for('logout') }}"><button>Logout</button></a>
-</div>
+  </head>
+  <body>
 
-</body>
+    <!-- post-selection-section -->
+    <div class="creation-container">
+      <h1>Create Your Post</h1>
+      <div class="topic">
+          <h2>Enter Your Topic</h2>
+          <input type="text">
+      </div>
+
+      <div class="writing-style">
+          <h2>Select Writing Style</h2>
+          <div class="options">
+              <div><label for=""><input type="radio" name="writingStyle">Option A</label></div>
+              <div><label for=""><input type="radio" name="writingStyle">Option B</label></div>
+              <div><label for=""><input type="radio" name="writingStyle">Option C</label></div>
+              <div><label for=""><input type="radio" name="writingStyle" value="custom" id="customOption">Custom</label></div>
+              <input type="text" id="customInput">
+          </div>
+      </div>
+
+      <button>Generate Post</button>
+  </div>
+
+
+
+    <!-- post-preview-section -->
+    <div class="preview-container">
+        <div class="upper-conatiner">
+            <div class="edit-options">
+              <button><i class="bi bi-type-bold"></i></button>
+              <button><i class="bi bi-type-italic"></i></button>
+              <button><i class="bi bi-type-underline"></i></button>
+              <button><i class="bi bi-type-strikethrough"></i></button>
+              <button><i class="bi bi-list-ul"></i></button>
+              <button><i class="bi bi-list-ol"></i></button>
+              <button><i class="bi bi-arrow-counterclockwise"></i></button>
+              <button><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div class="screen">
+              <h2>Post Preview</h2>
+            </div>
+          </div>
+      
+          <div class="lower-container">
+                <div class="inputBox">
+                  <textarea id="postInput" placeholder="Write something...."></textarea>
+                  <div class="media">
+                    <button><i class="bi bi-emoji-smile"></i></button>
+                    <button><i class="bi bi-image"></i></button>
+                  </div>
+                </div>
+                <div class="add-media">
+
+                </div>
+                <div class="post-preview">
+                  <div class="post">
+
+                    <div class="profile">
+                      <img src="" alt="">
+                      <div class="name">
+                        <span style="font-size: 1rem; font-weight: bold;">Manas Chopra</span>
+                        <span>Founder @ Geek Room</span>
+                        <div style="display: flex; flex-direction: row;">
+                          <span>Now</span>
+                          <div class="dot"></div>
+                          <i class="bi bi-globe-central-south-asia"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="content">
+                      <div class="text-preview" id="postPreview"></div>
+                    </div>
+
+                    <div class="reaction">
+                      <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+                        <img src="" alt="" class="reactions">
+                        <span>Pratham Batra and 79 others</span>
+                      </div>
+                      <div class="comments">
+                          <span>10 comments</span>
+                          <div class="dot"></div>
+                          <span>3 reposts</span>
+                      </div>
+                    </div>
+
+                    <div class="horizontal-line"></div>
+
+                    <div class="react">
+                      <div class="react-type">
+                        <i class="bi bi-hand-thumbs-up flip-horizontal"></i>
+                        <span>Like</span>
+                      </div>
+                      <div class="react-type">
+                        <i class="bi bi-chat"></i>
+                        <span>Comment</span>
+                      </div>
+                      <div class="react-type">
+                        <i class="bi bi-chat"></i>
+                        <span>Share</span>
+                      </div>
+                      <div class="react-type">
+                        <i class="bi bi-send"></i>
+                        <span>Send</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+          </div>
+    </div>
+    <!-- post-preview-section -->
+
+
+    <script>
+      // Ensure input is hidden initially
+      window.addEventListener('DOMContentLoaded', () => {
+        const customOption = document.getElementById('customOption');
+        const customInput = document.getElementById('customInput');
+
+        if (!customOption.checked) {
+          customInput.style.display = 'none';
+        }
+      });
+
+
+      const postInput = document.getElementById('postInput');
+      const postPreview = document.getElementById('postPreview');
+    
+      postInput.addEventListener('input', () => {
+        // Update post preview content
+        postPreview.innerHTML = postInput.value;
+    
+        // Adjust textarea height
+        postInput.style.height = 'auto'; // Reset height to recalculate
+        postInput.style.height = postInput.scrollHeight + 'px'; // Set height to content height
+    
+        // Adjust post preview height
+        postPreview.style.height = 'auto';
+        postPreview.style.height = postPreview.scrollHeight + 'px';
+      });
+
+      //one option selection
+      const radioButtons = document.querySelectorAll('input[name="writingStyle"]');
+
+      //custom option appearance
+      const customOption = document.getElementById('customOption');
+      const customInput = document.getElementById('customInput');
+
+      radioButtons.forEach(radio => {
+        radio.addEventListener('change', () => {
+          if (customOption.checked) {
+            customInput.style.display = 'block';
+          } else {
+            customInput.style.display = 'none';
+            customInput.value = ''; // Clear input when hidden
+          }
+        });
+      });
+
+
+    </script>
+
+    <!-- Bootstrap JS + Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+  </body>
 </html>
