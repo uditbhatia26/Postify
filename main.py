@@ -5,6 +5,7 @@ from config import post_generation_template
 from langchain_core.prompts import PromptTemplate
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_groq import ChatGroq
+import requests
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import Tool
 from langchain.agents import initialize_agent, AgentType
@@ -58,7 +59,10 @@ linkedin = oauth.register(
     api_base_url="https://api.linkedin.com/v2/",
     userinfo_endpoint="https://api.linkedin.com/v2/me",
     client_kwargs={"scope": "openid email w_member_social"},
+    grant_type="authorization_code", 
+    server_metadata_url=None, 
 )
+
 
 @app.route('/')
 def home():
@@ -78,37 +82,70 @@ def google_callback():
 
 @app.route("/linkedin/login")
 def linkedin_login():
-    """ Redirect user to LinkedIn for authentication """
-    return linkedin.authorize_redirect(url_for("linkedin_callback", _external=True))
+    return linkedin.authorize_redirect(
+        url_for("linkedin_callback", _external=True),
+        response_type="code" 
+    )
 
 @app.route("/linkedin/callback")
 def linkedin_callback():
-    """ Handle LinkedIn authentication response """
-    token = linkedin.authorize_access_token()
-    if not token:
-        return "Authentication failed", 401
+    # Get authorization code
+    auth_code = request.args.get("code")
+    if not auth_code:
+        return "Authorization code not found!", 400
 
-    # Get user details
-    user_info = linkedin.get("me").json()
-    email_info = linkedin.get("emailAddress?q=members&projection=(elements*(handle~))")
-    email_data = email_info.json()
+    # Exchange authorization code for access token
+    token_url = "https://www.linkedin.com/oauth/v2/accessToken"
+    redirect_uri = url_for("linkedin_callback", _external=True)
+    
+    data = {
+        "grant_type": "authorization_code",
+        "code": auth_code,
+        "redirect_uri": redirect_uri,
+        "client_id": LINKEDIN_CLIENT_ID,
+        "client_secret": LINKEDIN_CLIENT_SECRET,
+    }
+
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    response = requests.post(token_url, data=data, headers=headers)
+    token_data = response.json()
+
+    if "access_token" not in token_data:
+        print(f"Token exchange error: {token_data}")
+        return f"Failed to get access token: {token_data}", 400
+
+    access_token = token_data["access_token"]
+    session["linkedin_token"] = access_token
+    
+    # Step 3: Fetch User Profile Info
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_info = requests.get("https://api.linkedin.com/v2/me", headers=headers).json()
+
+    # Step 4: Fetch User Email
+    email_info = requests.get(
+        "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+        headers=headers
+    ).json()
 
     user_id = user_info.get("id")
     first_name = user_info.get("localizedFirstName")
     last_name = user_info.get("localizedLastName")
-    email = email_data["elements"][0]["handle~"]["emailAddress"] if "elements" in email_data else "Not Provided"
+    email = email_info["elements"][0]["handle~"]["emailAddress"] if "elements" in email_info else "Not Provided"
 
-    # Store in session
+    # Step 5: Store User Details in Session
     session["user"] = {
         "id": user_id,
         "name": f"{first_name} {last_name}",
         "email": email
     }
-    
-    return redirect(url_for("dashboard", username=first_name))
 
+    # Redirect User to Dashboard
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/dashboard")
 @app.route("/dashboard/<username>")
-def dashboard(username):
+def dashboard(username=None):
     user = session.get("user")
     if not user:
         return redirect(url_for("login"))
