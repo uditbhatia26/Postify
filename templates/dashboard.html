@@ -10,6 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 
   </head>
+
+  
   <body>
 
     <!-- post-selection-section -->
@@ -17,17 +19,17 @@
       <h1>Create Your Post</h1>
       <div class="topic">
           <h2>Enter Your Topic</h2>
-          <input type="text">
+          <input type="text" id="topic" name="topic">
       </div>
 
       <div class="writing-style">
           <h2>Select Writing Style</h2>
           <div class="options">
-              <div><label for=""><input type="radio" name="writingStyle">Option A</label></div>
-              <div><label for=""><input type="radio" name="writingStyle">Option B</label></div>
-              <div><label for=""><input type="radio" name="writingStyle">Option C</label></div>
-              <div><label for=""><input type="radio" name="writingStyle" value="custom" id="customOption">Custom</label></div>
-              <input type="text" id="customInput">
+              <div><label for="optionA"><input type="radio" name="writingStyle" id="optionA">Option A</label></div>
+              <div><label for="optionB"><input type="radio" name="writingStyle" id="optionB">Option B</label></div>
+              <div><label for="optionC"><input type="radio" name="writingStyle" id="optionC">Option C</label></div>
+              <div><label for="customOption"><input type="radio" name="writingStyle" value="custom" id="customOption">Custom</label></div>
+              <input type="text" id="customInput" name="customInput">
           </div>
       </div>
 
