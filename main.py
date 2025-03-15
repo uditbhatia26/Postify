@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, session, url_for
+from flask import Flask, render_template, redirect, session, url_for, request
 from authlib.integrations.flask_client import OAuth
 import os
 from config import post_generation_template
@@ -13,10 +13,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
+app.secret_key = os.getenv("SECRET_KEY")
+
+# Initialize Search Tool
 search = DuckDuckGoSearchRun(name='Search')
 tools = [Tool.from_function(name="search_news", func=search.run, description="Search for news articles.")]
 
+# Initialize LLM
 llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model="llama3-70b-8192")
 prompt = PromptTemplate(
     input_variables=['user_input', 'writing_style'],
@@ -26,7 +29,7 @@ prompt = PromptTemplate(
 
 generation_chain = prompt | llm 
 
-# Google OAuth Config
+# OAuth Config
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
@@ -54,7 +57,7 @@ linkedin = oauth.register(
     authorize_url="https://www.linkedin.com/oauth/v2/authorization",
     api_base_url="https://api.linkedin.com/v2/",
     userinfo_endpoint="https://api.linkedin.com/v2/me",
-    client_kwargs={"scope": "r_liteprofile r_emailaddress w_member_social"},
+    client_kwargs={"scope": "openid email w_member_social"},
 )
 
 @app.route('/')
@@ -71,27 +74,46 @@ def google_callback():
     token = google.authorize_access_token()
     user_info = google.get("userinfo").json()
     session["user"] = user_info
-    return redirect(url_for("user_dashboard", username=user_info["name"]))
+    return redirect(url_for("dashboard", username=user_info["name"]))
 
 @app.route("/linkedin/login")
 def linkedin_login():
+    """ Redirect user to LinkedIn for authentication """
     return linkedin.authorize_redirect(url_for("linkedin_callback", _external=True))
 
 @app.route("/linkedin/callback")
 def linkedin_callback():
+    """ Handle LinkedIn authentication response """
     token = linkedin.authorize_access_token()
-    user_info = linkedin.get("userinfo_endpoint").json()
-    session["user"] = user_info
-    return redirect(url_for("user_dashboard", username=user_info["localizedFirstName"]))
+    if not token:
+        return "Authentication failed", 401
+
+    # Get user details
+    user_info = linkedin.get("me").json()
+    email_info = linkedin.get("emailAddress?q=members&projection=(elements*(handle~))")
+    email_data = email_info.json()
+
+    user_id = user_info.get("id")
+    first_name = user_info.get("localizedFirstName")
+    last_name = user_info.get("localizedLastName")
+    email = email_data["elements"][0]["handle~"]["emailAddress"] if "elements" in email_data else "Not Provided"
+
+    # Store in session
+    session["user"] = {
+        "id": user_id,
+        "name": f"{first_name} {last_name}",
+        "email": email
+    }
+    
+    return redirect(url_for("dashboard", username=first_name))
 
 @app.route("/dashboard/<username>")
-def user_dashboard(username):
+def dashboard(username):
     user = session.get("user")
     if not user:
         return redirect(url_for("login"))
     
     return render_template("dashboard.html", user=user)
-
 
 @app.route("/login")
 def login():
@@ -103,12 +125,10 @@ def logout():
     return redirect("/")
 
 def generate_post(writing_style, user_input):
-    generation_chain.invoke(
-        input={
-            writing_style:writing_style,
-            user_input:user_input
-        }
-    )
+    """ Fix parameter passing """
+    formatted_prompt = prompt.format(user_input=user_input, writing_style=writing_style)
+    response = generation_chain.invoke(formatted_prompt)
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
