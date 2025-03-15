@@ -63,7 +63,7 @@ GOOGLE_CLIENT_ID="your_google_client_id"
 GOOGLE_CLIENT_SECRET="your_google_client_secret"
 LINKEDIN_CLIENT_ID="your_linkedin_client_id"
 LINKEDIN_CLIENT_SECRET="your_linkedin_client_secret"
-SECRET_KEY="your_secret_key"
+GROQ_API_KEY="your_secret_key"
 ```
 
 ### 4️⃣ Run the Flask App
