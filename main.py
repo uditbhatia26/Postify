@@ -161,11 +161,18 @@ def logout():
     session.pop("user", None)
     return redirect("/")
 
-def generate_post(writing_style, user_input):
-    """ Fix parameter passing """
-    formatted_prompt = prompt.format(user_input=user_input, writing_style=writing_style)
-    response = generation_chain.invoke(formatted_prompt)
-    return response
+@app.route("/generate_post", methods=["POST"])
+def generate_post():
+    user_input = request.form.get("user_input")
+    writing_style = request.form.get("writing_style")
+
+    if not user_input:
+        return "No input provided", 400
+
+    # Generate post using LLM
+    post = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style})
+
+    return render_template("dashboard.html", user=session["user"], post=post.content)
 
 if __name__ == '__main__':
     app.run(debug=True)
