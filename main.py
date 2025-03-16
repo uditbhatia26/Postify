@@ -58,7 +58,7 @@ linkedin = oauth.register(
     authorize_url="https://www.linkedin.com/oauth/v2/authorization",
     api_base_url="https://api.linkedin.com/v2/",
     userinfo_endpoint="https://api.linkedin.com/v2/me",
-    client_kwargs={"scope": "openid email w_member_social"},
+    client_kwargs={"scope": "openid profile email w_member_social"},
     grant_type="authorization_code", 
     server_metadata_url=None, 
 )
@@ -89,15 +89,19 @@ def linkedin_login():
 
 @app.route("/linkedin/callback")
 def linkedin_callback():
-    # Get authorization code
+    print("🔹 LinkedIn Callback Triggered")
+
+    # Step 1: Get Authorization Code
     auth_code = request.args.get("code")
     if not auth_code:
         return "Authorization code not found!", 400
 
-    # Exchange authorization code for access token
+    print(f"✅ Authorization Code Received: {auth_code}")
+
+    # Step 2: Exchange Authorization Code for Access Token
     token_url = "https://www.linkedin.com/oauth/v2/accessToken"
     redirect_uri = url_for("linkedin_callback", _external=True)
-    
+
     data = {
         "grant_type": "authorization_code",
         "code": auth_code,
@@ -110,37 +114,41 @@ def linkedin_callback():
     response = requests.post(token_url, data=data, headers=headers)
     token_data = response.json()
 
+    print("🔹 Token Response:", token_data)
+
     if "access_token" not in token_data:
-        print(f"Token exchange error: {token_data}")
         return f"Failed to get access token: {token_data}", 400
 
     access_token = token_data["access_token"]
-    session["linkedin_token"] = access_token
-    
-    # Step 3: Fetch User Profile Info
+    print(f"✅ Access Token: {access_token}")
+
+    session["linkedin_token"] = access_token  # Store token in session
+
+    # Step 3: Fetch User Profile Info using /userinfo
     headers = {"Authorization": f"Bearer {access_token}"}
-    user_info = requests.get("https://api.linkedin.com/v2/me", headers=headers).json()
+    user_info = requests.get("https://api.linkedin.com/v2/userinfo", headers=headers).json()
 
-    # Step 4: Fetch User Email
-    email_info = requests.get(
-        "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
-        headers=headers
-    ).json()
+    print("🔹 User Info Response:", user_info)
 
-    user_id = user_info.get("id")
-    first_name = user_info.get("localizedFirstName")
-    last_name = user_info.get("localizedLastName")
-    email = email_info["elements"][0]["handle~"]["emailAddress"] if "elements" in email_info else "Not Provided"
+    # Extract user details
+    user_id = user_info.get("sub")  # `sub` is the unique user ID
+    first_name = user_info.get("given_name", "Unknown")
+    last_name = user_info.get("family_name", "User")
+    profile_picture = user_info.get("picture", "../static/assets/images/logo/postify-logo-03-01.png")  # Default if not available
 
-    # Step 5: Store User Details in Session
+    # Step 4: Store User Details in Session
     session["user"] = {
         "id": user_id,
         "name": f"{first_name} {last_name}",
-        "email": email
+        "profile_picture": profile_picture,
     }
 
-    # Redirect User to Dashboard
+    print("✅ Profile Picture URL:", profile_picture)
+    print("🔹 User Data Stored in Session:", session["user"])
+
     return redirect(url_for("dashboard"))
+
+
 
 
 @app.route("/dashboard")

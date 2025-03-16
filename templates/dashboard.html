@@ -86,17 +86,28 @@
 
     <!-- Sidebar -->
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-    <div class="sidebar" id="sidebar">
-      <div class="logo"><br><br><br><br>
-        <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Postify Logo">
-      </div>
-      <ul>
+<div class="sidebar" id="sidebar">
+    <div class="logo"><br><br><br><br>
+        {% if user and user.profile_picture %}
+            <img src="{{ user.profile_picture }}" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">
+        {% else %}
+            <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Postify Logo">
+        {% endif %}
+        
+        <!-- Display User Name -->
+        {% if user and user.name %}
+            <h3 style="color: white; margin-top: 6px;">Hey, {{ user.name }}! 😎</h3>
+        {% endif %}
+    </div>
+    <ul>
         <li><a href="{{ url_for('dashboard') }}"><i class="bi bi-house-door"></i> Home</a></li>
         <li><a href="#post-creation"><i class="bi bi-pencil-square"></i> Create Post</a></li>
         <li><a href="#post-preview"><i class="bi bi-eye"></i> Post Preview</a></li>
         <li><a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-      </ul>
-    </div>
+    </ul>
+</div>
+
+    
 
     <!-- Main Content -->
     <div class="content" style="margin-left: 250px; padding: 20px;">
@@ -105,12 +116,6 @@
           <div class="row">
             <div class="col-lg-12">
               <nav class="navbar navbar-expand-lg">
-                <a class="navbar-brand" href="index.html">
-                  <div style="display: flex; flex-direction: row; align-items: center;">
-                    <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Logo" style="height: 35px;"/>
-                    <h3 style="color: white;">Postify</h3>
-                  </div>
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                   data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                   aria-label="Toggle navigation">
