@@ -301,6 +301,7 @@ textarea:focus {
   overflow-wrap: break-word; /* Break long words */
   white-space: pre-wrap; /* Preserve whitespace and line breaks */
   transition: height 0.2s ease;
+  text-align: left;
 }
 
 
