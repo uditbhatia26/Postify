@@ -6,7 +6,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_groq import ChatGroq
 import requests
-from langchain_openai import ChatOpenAI
 from langchain_core.tools import Tool
 from langchain.agents import initialize_agent, AgentType
 from dotenv import load_dotenv
@@ -173,13 +172,11 @@ def logout():
 def generate_post():
     user_input = request.form.get("user_input")
     writing_style = request.form.get("writing_style")
-
     if not user_input:
         return "No input provided", 400
 
     # Generate post using LLM
     post = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style})
-
     return render_template("dashboard.html", user=session["user"], post=post.content)
 
 if __name__ == '__main__':
