@@ -1269,6 +1269,7 @@ p {
   background-position: top center;
   z-index: -1;
   background-size: cover;
+  filter: blur(2px);
 }
 
 @media only screen and (min-width: 1921px) {

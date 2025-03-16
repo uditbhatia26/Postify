@@ -3,108 +3,228 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard-Postify</title>
+    <title>Dashboard - Postify</title>
     <link rel="shortcut icon" href="../static/assets/images/logo/postify-logo-03-01.png" type="image/png" />
-
 
     <link rel="stylesheet" href="../static/assets/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background-color: #1a1a1a;
+        padding-top: 20px;
+        transition: all 0.3s;
+      }
+
+      .sidebar .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .sidebar .logo img {
+        width: 150px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar ul li {
+        padding: 15px;
+        text-align: center;
+      }
+
+      .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        transition: 0.3s;
+      }
+
+      .sidebar ul li a:hover {
+        background-color: #333;
+        border-radius: 5px;
+      }
+
+      .sidebar-toggle {
+        display: none;
+      }
+
+      /* Responsive Sidebar */
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          width: 0;
+          overflow: hidden;
+        }
+
+        .sidebar-toggle {
+          display: block;
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: white;
+          cursor: pointer;
+        }
+      }
+    </style>
 
   </head>
 
-  
   <body>
 
-    <div class="navbar-area">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <nav class="navbar navbar-expand-lg">
-              <a class="navbar-brand" href="index.html">
-                <div style="display: flex; flex-direction: row; align-items: center;">
-                  <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Logo" style="height: 35px;"/>
-                  <h3 style="color: white;">Postify</h3>
+    <!-- Sidebar -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+<div class="sidebar" id="sidebar">
+    <div class="logo"><br><br><br><br>
+        {% if user and user.profile_picture %}
+            <img src="{{ user.profile_picture }}" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">
+        {% else %}
+            <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Postify Logo">
+        {% endif %}
+        
+        <!-- Display User Name -->
+        {% if user and user.name %}
+            <h3 style="color: white; margin-top: 6px;">Hey, {{ user.name }}! 😎</h3>
+        {% endif %}
+    </div>
+    <ul>
+        <li><a href="{{ url_for('dashboard') }}"><i class="bi bi-house-door"></i> Home</a></li>
+        <li><a href="#post-creation"><i class="bi bi-pencil-square"></i> Create Post</a></li>
+        <li><a href="#post-preview"><i class="bi bi-eye"></i> Post Preview</a></li>
+        <li><a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+    </ul>
+</div>
+
+    
+
+    <!-- Main Content -->
+    <div class="content" style="margin-left: 250px; padding: 20px;">
+      <div class="navbar-area">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                  aria-label="Toggle navigation">
+                  <span class="toggler-icon"> </span>
+                  <span class="toggler-icon"> </span>
+                  <span class="toggler-icon"> </span>
+                </button>
+
+                <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
+                  <ul id="nav" class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                      <a class="page-scroll active" href="#post-creation">Create Post</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="page-scroll" href="#post-preview">Post Preview</a>
+                    </li>
+                  </ul>
                 </div>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="toggler-icon"> </span>
-                <span class="toggler-icon"> </span>
-                <span class="toggler-icon"> </span>
-              </button>
 
-              <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
-                <ul id="nav" class="navbar-nav ms-auto">
-                  <li class="nav-item">
-                    <a class="page-scroll active" href="#home">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="page-scroll" href="#features">Features</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="page-scroll" href="#about">About</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="page-scroll" href="#facts">Why</a>
-                  </li>
-                </ul>
-              </div>
-              <!-- navbar collapse -->
+                <div class="navbar-btn d-none d-sm-inline-block">
+                  <a class="main-btn" href="{{ url_for('logout') }}">
+                    Logout
+                  </a>
+                </div>
 
-              <div class="navbar-btn d-none d-sm-inline-block">
-                <a class="main-btn" data-scroll-nav="0" href="{{ url_for('login') }}">
-                  Register Now
-              </a>
-              </div>
-            </nav>
-            <!-- navbar -->
+              </nav>
+            </div>
           </div>
         </div>
-        <!-- row -->
       </div>
-      <!-- container -->
-    </div>
     <!-- navbar area -->
 
     <!-- post-selection-section -->
-    <div class="creation-container single-services text-center wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-      <h1>Create Your Post</h1>
-      <div class="topic">
-          <h2>Enter Your Topic</h2>
-          <input type="text" id="topic" name="topic">
-      </div>
+    <form action="{{ url_for('generate_post') }}" method="post">
 
-      <div class="writing-style">
-          <h2>Select Writing Style</h2>
-          <div class="options">
-              <div><label for="optionA"><input type="radio" name="writingStyle" id="optionA">Option A</label></div>
-              <div><label for="optionB"><input type="radio" name="writingStyle" id="optionB">Option B</label></div>
-              <div><label for="optionC"><input type="radio" name="writingStyle" id="optionC">Option C</label></div>
-              <div><label for="customOption"><input type="radio" name="writingStyle" value="custom" id="customOption">Custom</label></div>
-              <input type="text" id="customInput" name="customInput">
+      <div class="creation-container single-services wow fadeIn" id="post-creation" data-wow-duration="1s" data-wow-delay="0.2s">
+          <h1>Create Your Post</h1>
+  
+          <div class="topic">
+              <h2>Enter Your Topic</h2>
+              <input type="text" id="topic" name="user_input" placeholder="Enter your topic or an experience" required>
           </div>
+  
+          <div class="writing-style">
+              <h2>Select Writing Style</h2>
+              <div class="options">
+                <div><label for="optionA"><input type="radio" name="writing_style" value="Professional" id="optionA"> Professional</label></div>
+                <div><label for="optionB"><input type="radio" name="writing_style" value="Storytelling" id="optionB"> Storytelling</label></div>
+                <div><label for="optionC"><input type="radio" name="writing_style" value="Casual" id="optionC"> Casual</label></div>
+                
+                <div>
+                    <label for="customOption">
+                        <input type="radio" name="writing_style" value="custom" id="customOption"> Custom
+                    </label>
+                </div>
+            
+                <!-- Custom Input Field (Initially Hidden) -->
+                <input type="text" id="customInput" name="custom_input" placeholder="Enter custom style..." style="display: none;">
+            </div>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const customOption = document.getElementById('customOption');
+                    const customInput = document.getElementById('customInput');
+                    const allRadios = document.getElementsByName('writing_style');
+            
+                    // Check when any radio button is clicked
+                    allRadios.forEach(radio => {
+                        radio.addEventListener('change', function () {
+                            if (customOption.checked) {
+                                customInput.style.display = "block";  // Show input
+                                customInput.disabled = false;  // Enable input
+                                customInput.setAttribute("required", "true");  // Make it required
+                            } else {
+                                customInput.style.display = "none";  // Hide input
+                                customInput.disabled = true;  // Disable input
+                                customInput.removeAttribute("required");  // Remove required
+                            }
+                        });
+                    });
+                });
+            </script>
+            
+          </div>
+  
+          <button type="submit" class="main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s">
+              Generate Post
+          </button>
       </div>
-
-      <button class="main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s">Generate Post</button>
-  </div>
+  </form>
+  
+  <script>
+      // Enable custom input field only when "Custom" option is selected
+      document.getElementById('customOption').addEventListener('change', function() {
+          document.getElementById('customInput').disabled = !this.checked;
+      });
+  </script>  
 
 
 
     <!-- post-preview-section -->
-    <div class="preview-container single-services text-center mt-30 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
+    <div class="preview-container single-services text-center mt-30 wow fadeIn" id="post-preview" data-wow-duration="1s" data-wow-delay="0.2s">
         <div class="upper-conatiner">
             <div class="edit-options">
-              <button><i class="bi bi-type-bold"></i></button>
-              <button><i class="bi bi-type-italic"></i></button>
-              <button><i class="bi bi-type-underline"></i></button>
-              <button><i class="bi bi-type-strikethrough"></i></button>
-              <button><i class="bi bi-list-ul"></i></button>
-              <button><i class="bi bi-list-ol"></i></button>
-              <button><i class="bi bi-arrow-counterclockwise"></i></button>
-              <button><i class="bi bi-arrow-clockwise"></i></button>
+              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-type-bold"></i></button>
+              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-type-italic"></i></button>
+              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-list-ul"></i></button>
+              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-list-ol"></i></button>
+              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-arrow-counterclockwise"></i></button>
             </div>
             <div class="screen">
               <h2>Post Preview</h2>
@@ -113,10 +233,17 @@
       
           <div class="lower-container">
                 <div class="inputBox">
-                  <textarea id="postInput" placeholder="Write something...."></textarea>
+                  <textarea id="postInput" placeholder="Write something....">
+{% if post %}
+{{ post }}
+{% endif %}
+                  </textarea>
                   <div class="media">
-                    <button><i class="bi bi-emoji-smile"></i></button>
-                    <button><i class="bi bi-image"></i></button>
+                    <div style="display: flex; flex-direction: row; gap: 40px;">
+                      <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-emoji-smile"></i></button>
+                      <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-image"></i></button>
+                    </div>
+                    <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s">Post on Linkdin</button>
                   </div>
                 </div>
                 <div class="add-media">
@@ -126,7 +253,7 @@
                   <div class="post">
 
                     <div class="profile">
-                      <img src="" alt="">
+                      <img src="../static/assets/images/header/manas.png" alt="Manas Chopra">
                       <div class="name">
                         <span style="font-size: 1rem; font-weight: bold;">Manas Chopra</span>
                         <span>Founder @ Geek Room</span>
@@ -144,7 +271,7 @@
 
                     <div class="reaction">
                       <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-                        <img src="" alt="" class="reactions">
+                        <img src="../static/assets/images/header/prtm.png" alt="Pratham Batra" class="reactions">
                         <span>Pratham Batra and 79 others</span>
                       </div>
                       <div class="comments">
@@ -182,120 +309,7 @@
     </div>
     <!-- post-preview-section -->
 
-  <!--======= FOOTER PART START ======--> 
-  <footer id="footer" class="footer-area pt-120">
-    <div class="container">
-      <!-- subscribe area -->
-      <div class="footer-widget pb-100">
-        <div class="row">
-          <div class="col-lg-4 col-md-6 col-sm-8">
-            <div class="footer-about mt-50 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-              <a class="logo" href="javascript:void(0)">
-                <img src="../static/assets/images/logo/postify-logo-03-01.png" style="height: 50px;" alt="logo" />
-                <h3 style="height: 50px;">Postify</h3>
-              </a>
-              <p class="text">
-                Effortless Content, Automated Posting
-              </p>
-              <ul class="social">
-                <li>
-                  <a href="javascript:void(0)">
-                    <i class="lni lni-facebook-filled"> </i>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:void(0)">
-                    <i class="lni lni-twitter-filled"> </i>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:void(0)">
-                    <i class="lni lni-instagram-filled"> </i>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:void(0)">
-                    <i class="lni lni-linkedin-original"> </i>
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <!-- footer about -->
-          </div>
-          <div class="col-lg-5 col-md-7 col-sm-12">
-            <div class="footer-link d-flex mt-50 justify-content-sm-between">
-              <div class="link-wrapper wow fadeIn" data-wow-duration="1s" data-wow-delay="0.4s">
-                <div class="footer-title">
-                  <h4 class="title">Quick Link</h4>
-                </div>
-                <ul class="link">
-                  <li><a href="javascript:void(0)">Road Map</a></li>
-                  <li><a href="javascript:void(0)">Privacy Policy</a></li>
-                  <li><a href="javascript:void(0)">Refund Policy</a></li>
-                  <li><a href="javascript:void(0)">Terms of Service</a></li>
-                  <li><a href="javascript:void(0)">Pricing</a></li>
-                </ul>
-              </div>
-              <!-- footer wrapper -->
-              <div class="link-wrapper wow fadeIn" data-wow-duration="1s" data-wow-delay="0.6s">
-                <div class="footer-title">
-                  <h4 class="title">Resources</h4>
-                </div>
-                <ul class="link">
-                  <li><a href="javascript:void(0)">Home</a></li>
-                  <li><a href="javascript:void(0)">Page</a></li>
-                  <li><a href="javascript:void(0)">Portfolio</a></li>
-                  <li><a href="javascript:void(0)">Blog</a></li>
-                  <li><a href="javascript:void(0)">Contact</a></li>
-                </ul>
-              </div>
-              <!-- footer wrapper -->
-            </div>
-            <!-- footer link -->
-          </div>
-          <div class="col-lg-3 col-md-5 col-sm-12">
-            <div class="footer-contact mt-50 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.8s">
-              <div class="footer-title">
-                <h4 class="title">Contact Us</h4>
-              </div>
-              <ul class="contact">
-                <li>+809272561823</li>
-                <li>info@gmail.com</li>
-                <li>www.yourweb.com</li>
-                <li>
-                  123 Stree New York City , United <br />
-                  States Of America 750.
-                </li>
-              </ul>
-            </div>
-            <!-- footer contact -->
-          </div>
-        </div>
-        <!-- row -->
-      </div>
-      <!-- footer widget -->
-      <div class="footer-copyright">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="copyright d-sm-flex justify-content-between">
-              <div class="copyright-content">
-                <p class="text">
-                  Designed and Developed by Team "Besan ke Laddoo"
-                </p>
-              </div>
-              <!-- copyright content -->
-            </div>
-            <!-- copyright -->
-          </div>
-        </div>
-        <!-- row -->
-      </div>
-      <!-- footer copyright -->
-    </div>
-    <!-- container -->
-    <div id="particles-2"></div>
-  </footer>
-  <!--====== FOOTER PART ENDS ======-->
+  
 
   <!--====== BACK TOP TOP PART START ======-->
   <a href="#" class="back-to-top"> <i class="lni lni-chevron-up"> </i> </a>
@@ -353,344 +367,102 @@
 
       // main.js
       (function () {
-  "use strict";
+      "use strict";
 
-  // ==== Preloader
-  window.onload = function () {
-    window.setTimeout(fadeout, 500);
-  };
+      // ==== Preloader
+      window.onload = function () {
+        window.setTimeout(fadeout, 500);
+      };
 
-  function fadeout() {
-    document.querySelector(".preloader").style.opacity = "0";
-    document.querySelector(".preloader").style.display = "none";
-  }
-
-  // ======= Sticky
-  window.onscroll = function () {
-    const header_navbar = document.querySelector(".navbar-area");
-    const sticky = header_navbar.offsetTop;
-    const logo = document.querySelector(".navbar-brand img");
-
-    if (window.pageYOffset > sticky) {
-      header_navbar.classList.add("sticky");
-      logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
-    } else {
-      header_navbar.classList.remove("sticky");
-      logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
-    }
-
-    // show or hide the back-top-top button
-    const backToTop = document.querySelector(".back-to-top");
-    if (
-      document.body.scrollTop > 50 ||
-      document.documentElement.scrollTop > 50
-    ) {
-      backToTop.style.display = "flex";
-    } else {
-      backToTop.style.display = "none";
-    }
-  };
-
-  // ==== for menu scroll
-  const pageLink = document.querySelectorAll(".page-scroll");
-
-  pageLink.forEach((elem) => {
-    elem.addEventListener("click", (e) => {
-      e.preventDefault();
-      document.querySelector(elem.getAttribute("href")).scrollIntoView({
-        behavior: "smooth",
-        offsetTop: 1 - 60,
-      });
-    });
-  });
-
-  // section menu active
-  function onScroll(event) {
-    const sections = document.querySelectorAll(".page-scroll");
-    const scrollPos =
-      window.pageYOffset ||
-      document.documentElement.scrollTop ||
-      document.body.scrollTop;
-
-    for (let i = 0; i < sections.length; i++) {
-      const currLink = sections[i];
-      const val = currLink.getAttribute("href");
-      const refElement = document.querySelector(val);
-      const scrollTopMinus = scrollPos + 73;
-      if (
-        refElement.offsetTop <= scrollTopMinus &&
-        refElement.offsetTop + refElement.offsetHeight > scrollTopMinus
-      ) {
-        document.querySelector(".page-scroll").classList.remove("active");
-        currLink.classList.add("active");
-      } else {
-        currLink.classList.remove("active");
+      function fadeout() {
+        document.querySelector(".preloader").style.opacity = "0";
+        document.querySelector(".preloader").style.display = "none";
       }
-    }
-  }
 
-  window.document.addEventListener("scroll", onScroll);
+      // ======= Sticky
+      window.onscroll = function () {
+        const header_navbar = document.querySelector(".navbar-area");
+        const sticky = header_navbar.offsetTop;
+        const logo = document.querySelector(".navbar-brand img");
+      
+        if (window.pageYOffset > sticky) {
+          header_navbar.classList.add("sticky");
+          logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
+        } else {
+          header_navbar.classList.remove("sticky");
+          logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
+        }
 
-  //===== close navbar-collapse when a  clicked
-  let navbarToggler = document.querySelector(".navbar-toggler");
-  const navbarCollapse = document.querySelector(".navbar-collapse");
+      // show or hide the back-top-top button
+      const backToTop = document.querySelector(".back-to-top");
+      if (
+        document.body.scrollTop > 50 ||
+        document.documentElement.scrollTop > 50
+      ) {
+        backToTop.style.display = "flex";
+      } else {
+        backToTop.style.display = "none";
+      }
+      };
 
-  document.querySelectorAll(".page-scroll").forEach((e) =>
-    e.addEventListener("click", () => {
-      navbarToggler.classList.remove("active");
-      navbarCollapse.classList.remove("show");
-    })
-  );
-  navbarToggler.addEventListener("click", function () {
-    navbarToggler.classList.toggle("active");
-  });
+      // ==== for menu scroll
+      const pageLink = document.querySelectorAll(".page-scroll");
 
-  // ========= glightbox
-  const myGallery = GLightbox({
-    href: "https://www.youtube.com/watch?v=r44RKWyfcFw",
-    type: "video",
-    source: "youtube", //vimeo, youtube or local
-    width: 900,
-    autoplayVideos: true,
-  });
+      pageLink.forEach((elem) => {
+        elem.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.querySelector(elem.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+            offsetTop: 1 - 60,
+          });
+        });
+      });
 
-  //====== counter up
-  const cu = new counterUp({
-    start: 0,
-    duration: 2000,
-    intvalues: true,
-    interval: 100,
-    append: "k",
-  });
-  cu.start();
+      // section menu active
+      function onScroll(event) {
+        const sections = document.querySelectorAll(".page-scroll");
+        const scrollPos =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop;
+      
+        for (let i = 0; i < sections.length; i++) {
+          const currLink = sections[i];
+          const val = currLink.getAttribute("href");
+          const refElement = document.querySelector(val);
+          const scrollTopMinus = scrollPos + 73;
+          if (
+            refElement.offsetTop <= scrollTopMinus &&
+            refElement.offsetTop + refElement.offsetHeight > scrollTopMinus
+          ) {
+            document.querySelector(".page-scroll").classList.remove("active");
+            currLink.classList.add("active");
+          } else {
+            currLink.classList.remove("active");
+          }
+        }
+      }
 
-  //=====  WOW active
-  new WOW().init();
+      window.document.addEventListener("scroll", onScroll);
 
-  //=====  particles
-  if (document.getElementById("particles-1"))
-    particlesJS("particles-1", {
-      particles: {
-        number: {
-          value: 40,
-          density: {
-            enable: !0,
-            value_area: 4000,
-          },
-        },
-        color: {
-          value: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
-        },
-        shape: {
-          type: "circle",
-          stroke: {
-            width: 0,
-            color: "#fff",
-          },
-          polygon: {
-            nb_sides: 5,
-          },
-          image: {
-            src: "img/github.svg",
-            width: 33,
-            height: 33,
-          },
-        },
-        opacity: {
-          value: 0.15,
-          random: !0,
-          anim: {
-            enable: !0,
-            speed: 0.2,
-            opacity_min: 0.15,
-            sync: !1,
-          },
-        },
-        size: {
-          value: 50,
-          random: !0,
-          anim: {
-            enable: !0,
-            speed: 2,
-            size_min: 5,
-            sync: !1,
-          },
-        },
-        line_linked: {
-          enable: !1,
-          distance: 150,
-          color: "#ffffff",
-          opacity: 0.4,
-          width: 1,
-        },
-        move: {
-          enable: !0,
-          speed: 1,
-          direction: "top",
-          random: !0,
-          straight: !1,
-          out_mode: "out",
-          bounce: !1,
-          attract: {
-            enable: !1,
-            rotateX: 600,
-            rotateY: 600,
-          },
-        },
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: !1,
-            mode: "bubble",
-          },
-          onclick: {
-            enable: !1,
-            mode: "repulse",
-          },
-          resize: !0,
-        },
-        modes: {
-          grab: {
-            distance: 400,
-            line_linked: {
-              opacity: 1,
-            },
-          },
-          bubble: {
-            distance: 250,
-            size: 0,
-            duration: 2,
-            opacity: 0,
-            speed: 3,
-          },
-          repulse: {
-            distance: 400,
-            duration: 0.4,
-          },
-          push: {
-            particles_nb: 4,
-          },
-          remove: {
-            particles_nb: 2,
-          },
-        },
-      },
-      retina_detect: !0,
-    });
+      //===== close navbar-collapse when a  clicked
+      let navbarToggler = document.querySelector(".navbar-toggler");
+      const navbarCollapse = document.querySelector(".navbar-collapse");
 
-  if (document.getElementById("particles-2"))
-    particlesJS("particles-2", {
-      particles: {
-        number: {
-          value: 40,
-          density: {
-            enable: !0,
-            value_area: 4000,
-          },
-        },
-        color: {
-          value: ["#FFFFFF", "#FFFFFF", "#FFFFFF"],
-        },
-        shape: {
-          type: "circle",
-          stroke: {
-            width: 0,
-            color: "#fff",
-          },
-          polygon: {
-            nb_sides: 5,
-          },
-          image: {
-            src: "img/github.svg",
-            width: 33,
-            height: 33,
-          },
-        },
-        opacity: {
-          value: 0.15,
-          random: !0,
-          anim: {
-            enable: !0,
-            speed: 0.2,
-            opacity_min: 0.15,
-            sync: !1,
-          },
-        },
-        size: {
-          value: 50,
-          random: !0,
-          anim: {
-            enable: !0,
-            speed: 2,
-            size_min: 5,
-            sync: !1,
-          },
-        },
-        line_linked: {
-          enable: !1,
-          distance: 150,
-          color: "#ffffff",
-          opacity: 0.4,
-          width: 1,
-        },
-        move: {
-          enable: !0,
-          speed: 1,
-          direction: "top",
-          random: !0,
-          straight: !1,
-          out_mode: "out",
-          bounce: !1,
-          attract: {
-            enable: !1,
-            rotateX: 600,
-            rotateY: 600,
-          },
-        },
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: !1,
-            mode: "bubble",
-          },
-          onclick: {
-            enable: !1,
-            mode: "repulse",
-          },
-          resize: !0,
-        },
-        modes: {
-          grab: {
-            distance: 400,
-            line_linked: {
-              opacity: 1,
-            },
-          },
-          bubble: {
-            distance: 250,
-            size: 0,
-            duration: 2,
-            opacity: 0,
-            speed: 3,
-          },
-          repulse: {
-            distance: 400,
-            duration: 0.4,
-          },
-          push: {
-            particles_nb: 4,
-          },
-          remove: {
-            particles_nb: 2,
-          },
-        },
-      },
-      retina_detect: !0,
-    });
+      document.querySelectorAll(".page-scroll").forEach((e) =>
+        e.addEventListener("click", () => {
+          navbarToggler.classList.remove("active");
+          navbarCollapse.classList.remove("show");
+        })
+      );
+      navbarToggler.addEventListener("click", function () {
+        navbarToggler.classList.toggle("active");
+      });
+
+      //=====  WOW active
+      new WOW().init();
+
+
 })();
 
 
@@ -698,6 +470,7 @@
     </script>
 
     <!-- Bootstrap JS + Popper.js -->
+    <script src="../static/assets/js/editor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
   </body>
