@@ -10,75 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-      /* Sidebar Styles */
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 250px;
-        height: 100vh;
-        background-color: #1a1a1a;
-        padding-top: 20px;
-        transition: all 0.3s;
-      }
-
-      .sidebar .logo {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .sidebar .logo img {
-        width: 150px;
-      }
-
-      .sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .sidebar ul li {
-        padding: 15px;
-        text-align: center;
-      }
-
-      .sidebar ul li a {
-        color: white;
-        text-decoration: none;
-        display: block;
-        transition: 0.3s;
-      }
-
-      .sidebar ul li a:hover {
-        background-color: #333;
-        border-radius: 5px;
-      }
-
-      .sidebar-toggle {
-        display: none;
-      }
-
-      /* Responsive Sidebar */
-      @media screen and (max-width: 768px) {
-        .sidebar {
-          width: 0;
-          overflow: hidden;
-        }
-
-        .sidebar-toggle {
-          display: block;
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          background: none;
-          border: none;
-          font-size: 24px;
-          color: white;
-          cursor: pointer;
-        }
-      }
-    </style>
 
   </head>
 
@@ -86,7 +17,7 @@
 
     <!-- Sidebar -->
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-<div class="sidebar" id="sidebar">
+<div class="sidebar " id="sidebar">
     <div class="logo"><br><br><br><br>
         {% if user and user.profile_picture %}
             <img src="{{ user.profile_picture }}" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">
