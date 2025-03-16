@@ -82,14 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
         postInput.value = newText.trim();
         updatePreview();
     }
-    
-    document.querySelector(".bi-arrow-clockwise").addEventListener("click", function () {
-        if (historyIndex < history.length - 1) {
-            historyIndex++;
-            postInput.value = history[historyIndex];
-            postPreview.innerHTML = history[historyIndex].replace(/\n/g, "<br>");
-        }
-    });
 
     boldBtn.addEventListener("click", () => formatText("bold")); // LinkedIn Bold
     italicBtn.addEventListener("click", () => formatText("italic")); // LinkedIn Italic
