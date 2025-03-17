@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 
-
   </head>
 
   <body>
@@ -146,7 +145,15 @@
   </script>  
 
 
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  <div class="flash-container">
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endwith %}
     <!-- post-preview-section -->
     <div class="preview-container single-services text-center mt-30 wow fadeIn" id="post-preview" data-wow-duration="1s" data-wow-delay="0.2s">
         <div class="upper-conatiner">
@@ -166,9 +173,7 @@
           <div class="lower-container">
             <div class="inputBox">
               <form action="{{ url_for('post_to_linkedin') }}" method="post">
-                  <textarea id="postInput" name="final_post_content" placeholder="Write something....">
-                      {% if post %}{{ post }}{% endif %}
-                  </textarea>
+                  <textarea id="postInput" name="final_post_content" placeholder="Write something....">{% if post %}{{ post }}{% endif %}</textarea>
                   <div class="media">
                       <div style="display: flex; flex-direction: row; gap: 40px;">
                           <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-image"></i></button>
@@ -241,14 +246,6 @@
           </div>
     </div>
     <!-- post-preview-section -->
-
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
 
   
 
