@@ -238,16 +238,15 @@
     <div class="row justify-content-center m-10">
       <div class="col-lg-10">
         <div class="section-title text-center pb-40">
-          <div class="line m-auto"></div>
-          <h3 class="title">
-            Want to know more about the working? <Span>
+          <div ></div>
+          <h3 class="title ">
+            Want to know more about the working? <br><Span onclick="working_toggle()" class="working-title">Click here</Span>
           </h3>
-          <img src="../static/assets/images/working/workflow_for_postify.png" alt="working-image" style="margin: 50px 0 80px;">
+          <img id="work-image" class="hide-image" src="../static/assets/images/working/workflow_for_postify.png" alt="working-image" style="margin: 50px 0 80px;">
         </div>
         <!-- section title -->
       </div>
     </div>
-
   </section>
   <!--====== SERVICES PART ENDS ======-->
 
@@ -593,6 +592,13 @@
   <!--====== BACK TOP TOP PART ENDS ======-->
 
   <!--====== Javascript Files ======-->
+  <script>
+    function working_toggle() {
+    const section = document.getElementById('work-image');
+    // Toggle the 'hide-image' image
+    section.classList.toggle('hide-image');
+    }
+  </script>
   <script src="../static/assets/js/bootstrap.bundle.min.js"></script>
   <script src="../static/assets/js/wow.min.js"></script>
   <script src="../static/assets/js/glightbox.min.js"></script>
