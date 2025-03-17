@@ -16,6 +16,13 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
+# OAuth Config
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
+LINKEDIN_CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
+LINKEDIN_REDIRECT_URI = "http://localhost:5000/linkedin/callback"
+
 # Initialize Search Tool
 search = DuckDuckGoSearchRun(name='Search')
 tools = [Tool.from_function(name="search_news", func=search.run, description="Search for news articles.")]
@@ -29,13 +36,6 @@ prompt = PromptTemplate(
 )
 
 generation_chain = prompt | llm 
-
-# OAuth Config
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
-LINKEDIN_CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
-LINKEDIN_REDIRECT_URI = "http://localhost:5000/linkedin/callback"
 
 oauth = OAuth(app)
 google = oauth.register(
@@ -64,7 +64,6 @@ linkedin = oauth.register(
 )
 
 def post_to_linkedin_api(access_token, post_content):
-    """Posts the generated content to the authenticated user's LinkedIn feed."""
     user_id = session["user"]["id"]
     post_url = "https://api.linkedin.com/v2/ugcPosts"
 
@@ -96,8 +95,6 @@ def post_to_linkedin_api(access_token, post_content):
         return True, "Post successfully published."
     else:
         return False, response.json()
-
-    
 
 @app.route("/post_to_linkedin", methods=["POST"])
 def post_to_linkedin():
@@ -145,16 +142,11 @@ def linkedin_login():
 
 @app.route("/linkedin/callback")
 def linkedin_callback():
-    print("🔹 LinkedIn Callback Triggered")
 
-    # Step 1: Get Authorization Code
     auth_code = request.args.get("code")
     if not auth_code:
         return "Authorization code not found!", 400
 
-    print(f"✅ Authorization Code Received: {auth_code}")
-
-    # Step 2: Exchange Authorization Code for Access Token
     token_url = "https://www.linkedin.com/oauth/v2/accessToken"
     redirect_uri = url_for("linkedin_callback", _external=True)
 
@@ -170,37 +162,24 @@ def linkedin_callback():
     response = requests.post(token_url, data=data, headers=headers)
     token_data = response.json()
 
-    print("🔹 Token Response:", token_data)
-
     if "access_token" not in token_data:
         return f"Failed to get access token: {token_data}", 400
 
     access_token = token_data["access_token"]
-    print(f"✅ Access Token: {access_token}")
-
-    session["linkedin_token"] = access_token  # Store token in session
-
-    # Step 3: Fetch User Profile Info using /userinfo
+    session["linkedin_token"] = access_token
     headers = {"Authorization": f"Bearer {access_token}"}
     user_info = requests.get("https://api.linkedin.com/v2/userinfo", headers=headers).json()
 
-    print("🔹 User Info Response:", user_info)
-
-    # Extract user details
-    user_id = user_info.get("sub")  # `sub` is the unique user ID
+    user_id = user_info.get("sub")
     first_name = user_info.get("given_name", "Unknown")
     last_name = user_info.get("family_name", "User")
-    profile_picture = user_info.get("picture", "../static/assets/images/logo/postify-logo-03-01.png")  # Default if not available
+    profile_picture = user_info.get("picture", "../static/assets/images/logo/postify-logo-03-01.png")
 
-    # Step 4: Store User Details in Session
     session["user"] = {
         "id": user_id,
         "name": f"{first_name} {last_name}",
         "profile_picture": profile_picture,
     }
-
-    print("✅ Profile Picture URL:", profile_picture)
-    print("🔹 User Data Stored in Session:", session["user"])
 
     return redirect(url_for("dashboard"))
 
