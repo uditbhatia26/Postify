@@ -11,6 +11,7 @@ post_generation_template="""
       - **Body:** Provide insights, key takeaways, or a personal reflection.
       - **Conclusion:** End with a thought-provoking question or call to action.
       - **Hashtags:** Add relevant hashtags to improve reach and engagement.
+      - **Very Important:** Make sure not to add phrases like, Here's a linkedin post just give the post content only.
     
     User Input:
     - Topic or Experience: {user_input}
