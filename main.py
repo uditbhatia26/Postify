@@ -107,9 +107,6 @@ def post_to_linkedin():
         return redirect(url_for("dashboard"))
 
     post_content = request.form.get("final_post_content")
-    if not post_content:
-        flash("No post found. Generate a post first!", "warning")
-        return redirect(url_for("dashboard"))
 
     # Post to LinkedIn
     success, response = post_to_linkedin_api(access_token, post_content)
