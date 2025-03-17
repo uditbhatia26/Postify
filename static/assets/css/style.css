@@ -1129,6 +1129,13 @@ p {
   border: 1px solid #cecfd1;
 }
 
+.hide-image {
+  display: none;
+}
+
+.working-title:hover{
+  cursor: pointer;
+}
 
 /*===========================
   SUBSCRIBE  css 
