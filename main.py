@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, url_for, request, flash
 from authlib.integrations.flask_client import OAuth
 import os
-from flask import request, jsonify
+from flask import request
 from config import post_generation_template
 from langchain_core.prompts import PromptTemplate
 from langchain_community.tools import DuckDuckGoSearchRun
@@ -105,12 +105,11 @@ def post_to_linkedin():
 
     post_content = request.form.get("final_post_content")
 
-    # Post to LinkedIn
     success, response = post_to_linkedin_api(access_token, post_content)
 
     if success:
         flash("Post successfully published to LinkedIn!", "success")
-        session.pop("generated_post")  # Remove post after publishing
+        session.pop("generated_post") 
     else:
         flash(f"Failed to post on LinkedIn: {response}", "danger")
 
@@ -183,9 +182,6 @@ def linkedin_callback():
 
     return redirect(url_for("dashboard"))
 
-
-
-
 @app.route("/dashboard")
 @app.route("/dashboard/<username>")
 def dashboard(username=None):
@@ -211,16 +207,10 @@ def generate_post():
     
     if not user_input:
         return "No input provided", 400
-
-    # Generate post using LLM
     post_content = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style}).content
-
-    # Store the post in session (so it can be posted later)
     session["generated_post"] = post_content
 
     return render_template("dashboard.html", user=session["user"], post=post_content)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
