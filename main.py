@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, session, url_for, request
+from flask import Flask, render_template, redirect, session, url_for, request, flash
 from authlib.integrations.flask_client import OAuth
 import os
+from flask import request, jsonify
 from config import post_generation_template
 from langchain_core.prompts import PromptTemplate
 from langchain_community.tools import DuckDuckGoSearchRun
@@ -61,6 +62,65 @@ linkedin = oauth.register(
     grant_type="authorization_code", 
     server_metadata_url=None, 
 )
+
+def post_to_linkedin_api(access_token, post_content):
+    """Posts the generated content to the authenticated user's LinkedIn feed."""
+    user_id = session["user"]["id"]
+    post_url = "https://api.linkedin.com/v2/ugcPosts"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0"
+    }
+
+    post_data = {
+        "author": f"urn:li:person:{user_id}",
+        "lifecycleState": "PUBLISHED",
+        "specificContent": {
+            "com.linkedin.ugc.ShareContent": {
+                "shareCommentary": {
+                    "text": post_content
+                },
+                "shareMediaCategory": "NONE"
+            }
+        },
+        "visibility": {
+            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+        }
+    }
+
+    response = requests.post(post_url, json=post_data, headers=headers)
+    
+    if response.status_code == 201:
+        return True, "Post successfully published."
+    else:
+        return False, response.json()
+
+    
+
+@app.route("/post_to_linkedin", methods=["POST"])
+def post_to_linkedin():
+    access_token = session.get("linkedin_token")
+    if not access_token:
+        flash("User not authenticated with LinkedIn!", "danger")
+        return redirect(url_for("dashboard"))
+
+    post_content = request.form.get("final_post_content")
+    if not post_content:
+        flash("No post found. Generate a post first!", "warning")
+        return redirect(url_for("dashboard"))
+
+    # Post to LinkedIn
+    success, response = post_to_linkedin_api(access_token, post_content)
+
+    if success:
+        flash("Post successfully published to LinkedIn!", "success")
+        session.pop("generated_post")  # Remove post after publishing
+    else:
+        flash(f"Failed to post on LinkedIn: {response}", "danger")
+
+    return redirect(url_for("dashboard"))
 
 
 @app.route('/')
@@ -172,12 +232,19 @@ def logout():
 def generate_post():
     user_input = request.form.get("user_input")
     writing_style = request.form.get("writing_style")
+    
     if not user_input:
         return "No input provided", 400
 
     # Generate post using LLM
-    post = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style})
-    return render_template("dashboard.html", user=session["user"], post=post.content)
+    post_content = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style}).content
+
+    # Store the post in session (so it can be posted later)
+    session["generated_post"] = post_content
+
+    return render_template("dashboard.html", user=session["user"], post=post_content)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

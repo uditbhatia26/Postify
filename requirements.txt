@@ -9,3 +9,4 @@ duckduckgo-search
 langchain_core
 langchain-community
 crewai
+crewai_tools

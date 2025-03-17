@@ -164,20 +164,21 @@
           </div>
       
           <div class="lower-container">
-                <div class="inputBox">
-                  <textarea id="postInput" placeholder="Write something....">
-{% if post %}
-{{ post }}
-{% endif %}
+            <div class="inputBox">
+              <form action="{{ url_for('post_to_linkedin') }}" method="post">
+                  <textarea id="postInput" name="final_post_content" placeholder="Write something....">
+                      {% if post %}{{ post }}{% endif %}
                   </textarea>
                   <div class="media">
-                    <div style="display: flex; flex-direction: row; gap: 40px;">
-                      <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-emoji-smile"></i></button>
-                      <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-image"></i></button>
-                    </div>
-                    <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s">Post on LinkedIn</button>
+                      <div style="display: flex; flex-direction: row; gap: 40px;">
+                          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-image"></i></button>
+                      </div>
+                      <button type="submit" class="edit-button main-btn wow fadeInUp">Post on LinkedIn</button>
                   </div>
-                </div>
+              </form>
+          </div>
+          
+          
                 <div class="add-media">
 
                 </div>
@@ -241,6 +242,14 @@
     </div>
     <!-- post-preview-section -->
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
   
 
   <!--====== BACK TOP TOP PART START ======-->
@@ -295,7 +304,6 @@
           }
         });
       });
-
 
       // main.js
       (function () {
@@ -396,6 +404,26 @@
 
 
 })();
+    document.getElementById("postToLinkedIn").addEventListener("click", function () {
+        const postContent = document.getElementById("postInput").value;
+
+        if (!postContent.trim()) {
+            alert("Cannot post empty content!");
+            return;
+        }
+
+        fetch("/post_to_linkedin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ post_content: postContent }),
+        })
+        .then(response => response.text())
+        .then(data => alert(data))  // Display success/error message
+        .catch(error => console.error("Error:", error));
+    });
+
 
 
 
