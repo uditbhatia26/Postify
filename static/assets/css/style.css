@@ -1133,9 +1133,25 @@ p {
   display: none;
 }
 
+.working-title{
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #b9b9b9 !important;
+  border-radius: 20px;
+  width: 120px !important;
+  padding: 7px;
+  margin: 10px;
+}
+
 .working-title:hover{
   cursor: pointer;
 }
+
+/* .personal-link{
+  height: 100px;
+  margin-top: 10px;
+  color: #E1E1E1
+} */
 
 /*===========================
   SUBSCRIBE  css 
