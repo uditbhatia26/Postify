@@ -16,26 +16,26 @@
 
     <!-- Sidebar -->
     <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-<div class="sidebar " id="sidebar">
-    <div class="logo"><br><br><br><br>
-        {% if user and user.profile_picture %}
-            <img src="{{ user.profile_picture }}" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">
-        {% else %}
-            <img src="../static/assets/images/logo/postify-logo-03-01.png" alt="Postify Logo">
-        {% endif %}
-        
-        <!-- Display User Name -->
-        {% if user and user.name %}
-            <h3 style="color: white; margin-top: 6px;">Hey, {{ user.name }}! 😎</h3>
-        {% endif %}
+    <div class="sidebar " id="sidebar">
+      <div class="logo">
+          {% if user and user.profile_picture %}
+              <img src="{{ user.profile_picture }}" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%; border: 1.5px solid white;">
+          {% else %}
+              <img src="../static/assets/images/logo/134996379_da7ed7b0-5f66-4f97-a610-51100d3b9fd2.jpg" alt="Empty picture" style="width: 100px; height: 100px; border-radius: 50%; border: 1.5px solid white;">
+          {% endif %}
+          
+          <!-- Display User Name -->
+          {% if user and user.name %}
+              <h3 style="color: white; margin-top: 6px;">Hey, {{ user.name }}! 😎</h3>
+          {% endif %}
+      </div>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}"><i class="bi bi-house-door"></i> Home</a></li>
+            <li><a href="#post-creation"><i class="bi bi-pencil-square"></i> Create Post</a></li>
+            <li><a href="#post-preview"><i class="bi bi-eye"></i> Post Preview</a></li>
+            <li><a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+        </ul>
     </div>
-    <ul>
-        <li><a href="{{ url_for('dashboard') }}"><i class="bi bi-house-door"></i> Home</a></li>
-        <li><a href="#post-creation"><i class="bi bi-pencil-square"></i> Create Post</a></li>
-        <li><a href="#post-preview"><i class="bi bi-eye"></i> Post Preview</a></li>
-        <li><a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-    </ul>
-</div>
 
     
 

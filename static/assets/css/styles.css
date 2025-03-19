@@ -307,47 +307,64 @@ textarea:focus {
 
 
  /* Sidebar Styles */
- .sidebar {
-  position: fixed;
+
+  .sidebar{
   left: 0;
   top: 0;
   width: 250px;
-  height: 100vh;
-  background-color: #1a1a1a;
-  padding-top: 20px;
+  height: 97vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  border-radius: 10px;
+  background: -webkit-gradient(linear, left top, right top, from(#fe8464), color-stop(50%, #fe6e9a), to(#fe8464));
+  background: linear-gradient(to right, #fe8464 0%, #fe6e9a 50%, #fe8464 100%);
+  background-size: 200%;
+  padding-top: 100px;
+  align-content: center;
+  gap: 50px;
   transition: all 0.3s;
 }
 
 .sidebar .logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  margin-bottom: 20px;
+  gap: 30px;
 }
 
-.sidebar .logo img {
-  width: 150px;
-}
 
 .sidebar ul {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2rem;
   list-style: none;
-  padding: 0;
+  align-items: start;
+  padding: 0 20px;
   margin: 0;
+  gap: 10px;
 }
 
 .sidebar ul li {
-  padding: 15px;
-  text-align: center;
+  text-align: left;
 }
 
 .sidebar ul li a {
+  padding: 10px;
+  width: 200px;
   color: white;
   text-decoration: none;
   display: block;
   transition: 0.3s;
+  border-radius: 8px;
 }
 
 .sidebar ul li a:hover {
-  background-color: #333;
+  background-color: #ffffff2f;
   border-radius: 5px;
+  transition: 0.5ms;
 }
 
 .sidebar-toggle {
@@ -373,6 +390,7 @@ textarea:focus {
     cursor: pointer;
   }
 }
+
 
 
 /* style.css */
