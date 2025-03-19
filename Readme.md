@@ -57,15 +57,16 @@ Postify is an **AI-powered content automation tool** designed to streamline cont
 
 ### **1️⃣ Clone the Repository**
 
-````bash
+```bash
 git clone https://github.com/yourusername/postify.git
 cd postify
+```
 
 ### 2️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
-````
+```
 
 ### 3️⃣ Set Up Environment Variables
 
