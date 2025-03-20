@@ -318,8 +318,8 @@ textarea:focus {
   flex-direction: column;
   margin: 10px;
   border-radius: 10px;
-  background: -webkit-gradient(linear, left top, right top, from(#fe8464), color-stop(50%, #fe6e9a), to(#fe8464));
-  background: linear-gradient(to right, #fe8464 0%, #fe6e9a 50%, #fe8464 100%);
+  background: -webkit-gradient(linear, left top, right top, from(#3c65b0), to(#000000));
+  background: linear-gradient(to right, #3c65b0 0%, #000000 90%);
   background-size: 200%;
   padding-top: 100px;
   align-content: center;
@@ -390,6 +390,35 @@ textarea:focus {
     cursor: pointer;
   }
 }
+
+/* radio button */
+/* Hide the default radio button */
+.hidden-radio {
+  appearance: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Style the label to look clickable */
+.custom-radio label {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #fe6e9a;
+  border-radius: 8px;
+  color: #fe6e9a;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* When the radio is checked, update the label style */
+.hidden-radio:checked + label {
+  background-color: #fe6e9a;
+  color: #fff;
+  border-color: #fe6e9a;
+}
+
 
 
 
