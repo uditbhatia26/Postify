@@ -66,7 +66,7 @@ h6 {
 }
 
 .topic input {
-  min-width: 800px;
+  min-width: 100%;
   padding: 10px;
   background-color: #121723;
   color: white;
@@ -404,19 +404,25 @@ textarea:focus {
 .custom-radio label {
   display: inline-block;
   padding: 10px 20px;
-  border: 2px solid #fe6e9a;
+  border: 1px solid #e0e0e0;
+  width: 130px;
   border-radius: 8px;
-  color: #fe6e9a;
+  color: #e0e0e0;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s, color 0.3s;
+  text-align: center;
+  margin: 5px;
+}
+
+.custom-radio label:hover{
+  background-color: rgba(255, 255, 255, 0.258);
 }
 
 /* When the radio is checked, update the label style */
 .custom-radio:has(.hidden-radio:checked) label {
-  background-color: red;
+  background-color: rgba(255, 255, 255, 0.258);
   color: #fff;
-  border-color: #fe6e9a;
 }
 
 

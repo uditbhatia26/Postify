@@ -90,21 +90,41 @@
           </div>
   
           <div class="writing-style">
-              <h2>Select Writing Style</h2>
-              <div class="options">
-                <div class="custom-radio"><input class="hidden-radio" type="radio" name="writing_style" value="Professional" id="optionA"><label for="optionA"> Professional</label></div>
-                <div class="custom-radio"><input class="hidden-radio" type="radio" name="writing_style" value="Storytelling" id="optionB"><label for="optionB"> Storytelling</label></div>
-                <div class="custom-radio"><input class="hidden-radio" type="radio" name="writing_style" value="Casual" id="optionC"><label for="optionC">Casual</label></div>
-                
-                <div class="custom-radio">
-                    <label for="customOption">
-                        <input class="hidden-radio" type="radio" name="writing_style" value="custom" id="customOption"> Custom
-                    </label>
+              <h2 class="mb-2">Select Writing Style</h2>
+              <div class="row g-2"> 
+                <div class="col-6">
+                  <div class="custom-radio">
+                    <input class="hidden-radio" type="radio" name="writing_style" value="Professional" id="optionA">
+                    <label for="optionA">Professional</label>
+                  </div>
+                </div>
+            
+                <div class="col-6">
+                  <div class="custom-radio">
+                    <input class="hidden-radio" type="radio" name="writing_style" value="Storytelling" id="optionB">
+                    <label for="optionB">Storytelling</label>
+                  </div>
+                </div>
+            
+                <div class="col-6">
+                  <div class="custom-radio">
+                    <input class="hidden-radio" type="radio" name="writing_style" value="Casual" id="optionC">
+                    <label for="optionC">Casual</label>
+                  </div>
+                </div>
+            
+                <div class="col-6">
+                  <div class="custom-radio">
+                    <input class="hidden-radio" type="radio" name="writing_style" value="custom" id="customOption">
+                    <label for="customOption">Custom</label>
+                  </div>
                 </div>
             
                 <!-- Custom Input Field (Initially Hidden) -->
-                <input type="text" id="customInput" name="custom_input" placeholder="Enter custom style..." style="display: none;">
-            </div>
+                <div class="col-12">
+                  <input type="text" id="customInput" name="custom_input" placeholder="Enter custom style..." style="display: none;" class="form-control mt-2">
+                </div>
+              </div>
             
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -209,8 +229,8 @@
 
                     <div class="reaction">
                       <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-                        <img src="../static/assets/images/header/prtm.png" alt="Pratham Batra" class="reactions">
-                        <span>Pratham Batra and 79 others</span>
+                        <img src="../static/assets/images/team/1731411605037.jfif" alt="sky" class="reactions">
+                        <span>Aakash Sharma and 79 others</span>
                       </div>
                       <div class="comments">
                           <span>10 comments</span>
