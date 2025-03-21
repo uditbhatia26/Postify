@@ -19,10 +19,10 @@
 
     if (window.pageYOffset > sticky) {
       header_navbar.classList.add("sticky");
-      logo.src = "./static/assets/images/logo/postify-logo-03-01.png";
+      logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
     } else {
       header_navbar.classList.remove("sticky");
-      logo.src = "./static/assets/images/logo/postify-logo-03-01.png";
+      logo.src = "../static/assets/images/logo/postify-logo-03-01.png";
     }
 
     // show or hide the back-top-top button
