@@ -184,98 +184,158 @@
   </div>
 {% endif %}
 {% endwith %}
-    <!-- post-preview-section -->
-    <div class="preview-container single-services text-center mt-30 wow fadeIn" id="post-preview" data-wow-duration="1s" data-wow-delay="0.2s">
-        <div class="upper-conatiner">
-            <div class="edit-options">
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-type-bold"></i></button>
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-type-italic"></i></button>
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-list-ul"></i></button>
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-list-ol"></i></button>
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-arrow-counterclockwise"></i></button>
-              <button class="edit-button main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s"><i class="bi bi-arrow-clockwise"></i></button>
-            </div>
-            <div class="screen">
-              <h2>Post Preview</h2>
-            </div>
-          </div>
-      
-          <div class="lower-container">
-            <div class="inputBox">
-              <form action="{{ url_for('post_to_linkedin') }}" method="post">
-                  <textarea id="postInput" name="final_post_content" placeholder="Write something....">{% if post %}{{ post }}{% endif %}</textarea>
-                  <div class="media">
-                      <div style="display: flex; flex-direction: row; gap: 40px;">
-                          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-image"></i></button>
-                      </div>
-                      <button type="submit" class="edit-button main-btn wow fadeInUp">Post on LinkedIn</button>
-                  </div>
-              </form>
-          </div>
-          
-          
-                <div class="add-media">
+<!-- Post Preview Section -->
+<div class="preview-container single-services text-center mt-30 wow fadeIn" id="post-preview" data-wow-duration="1s" data-wow-delay="0.2s">
+  <div class="upper-conatiner">
+      <div class="edit-options">
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-type-bold"></i></button>
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-type-italic"></i></button>
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-list-ul"></i></button>
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-list-ol"></i></button>
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-arrow-counterclockwise"></i></button>
+          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+      <div class="screen">
+          <h2>Post Preview</h2>
+      </div>
+  </div>
 
-                </div>
-                <div class="post-preview">
-                  <div class="post">
+  <div class="lower-container">
+      <div class="inputBox">
+          <form action="{{ url_for('post_to_linkedin') }}" method="post" enctype="multipart/form-data">
+              <textarea id="postInput" name="final_post_content" placeholder="Write something....">{% if post %}{{ post }}{% endif %}</textarea>
+              
+              <div class="media">
+                  <!-- Image Upload Button -->
+                  <input type="file" id="imageUpload" name="image" accept="image/*" hidden>
+                  <label for="imageUpload" class="edit-button main-btn wow fadeInUp">
+                      <i class="bi bi-upload"></i> Upload Image
+                  </label>
 
-                    <div class="profile">
-                      <img src="../static/assets/images/team/udit.jpeg" alt="Udit Bhatia">
-                      <div class="name">
-                        <span style="font-size: 1rem; font-weight: bold;">Udit Bhatia</span>
-                        <span>MSIT '27</span>
-                        <div style="display: flex; flex-direction: row;">
+                  <!-- Image Search Box -->
+                  <input type="text" id="imageSearch" placeholder="Search Images..." class="image-search-box">
+                  <button type="button" onclick="searchImages()" class="edit-button main-btn wow fadeInUp">
+                      <i class="bi bi-image"></i> Search
+                  </button>
+              </div>
+
+              <!-- Image Preview Section -->
+              <div id="imagePreviewContainer">
+                  {% if image_url %}
+                  <img id="imagePreview" src="{{ image_url }}" alt="Selected Image">
+                  {% else %}
+                  <img id="imagePreview" style="display: none;">
+                  {% endif %}
+              </div>
+
+              <button type="submit" class="edit-button main-btn wow fadeInUp">Post on LinkedIn</button>
+          </form>
+      </div>
+
+      <div class="add-media"></div>
+      <div class="post-preview">
+          <div class="post">
+              <div class="profile">
+                  <img src="../static/assets/images/team/udit.jpeg" alt="Udit Bhatia">
+                  <div class="name">
+                      <span style="font-size: 1rem; font-weight: bold;">Udit Bhatia</span>
+                      <span>MSIT '27</span>
+                      <div style="display: flex; flex-direction: row;">
                           <span>Now</span>
                           <div class="dot"></div>
                           <i class="bi bi-globe-central-south-asia"></i>
-                        </div>
                       </div>
-                    </div>
-
-                    <div class="content">
-                      <div class="text-preview" id="postPreview"></div>
-                    </div>
-
-                    <div class="reaction">
-                      <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-                        <img src="../static/assets/images/team/aakash.jpeg" alt="sky" class="reactions">
-                        <span>Aakash Sharma and 79 others</span>
-                      </div>
-                      <div class="comments">
-                          <span>10 comments</span>
-                          <div class="dot"></div>
-                          <span>3 reposts</span>
-                      </div>
-                    </div>
-
-                    <div class="horizontal-line"></div>
-
-                    <div class="react">
-                      <div class="react-type">
-                        <i class="bi bi-hand-thumbs-up flip-horizontal"></i>
-                        <span>Like</span>
-                      </div>
-                      <div class="react-type">
-                        <i class="bi bi-chat"></i>
-                        <span>Comment</span>
-                      </div>
-                      <div class="react-type">
-                        <i class="bi bi-chat"></i>
-                        <span>Share</span>
-                      </div>
-                      <div class="react-type">
-                        <i class="bi bi-send"></i>
-                        <span>Send</span>
-                      </div>
-                    </div>
-
                   </div>
-                </div>
+              </div>
+
+              <div class="content">
+                  <div class="text-preview" id="postPreview"></div>
+              </div>
+
+              <div class="reaction">
+                  <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+                      <img src="../static/assets/images/team/aakash.jpeg" alt="sky" class="reactions">
+                      <span>Aakash Sharma and 79 others</span>
+                  </div>
+                  <div class="comments">
+                      <span>10 comments</span>
+                      <div class="dot"></div>
+                      <span>3 reposts</span>
+                  </div>
+              </div>
+
+              <div class="horizontal-line"></div>
+
+              <div class="react">
+                  <div class="react-type">
+                      <i class="bi bi-hand-thumbs-up flip-horizontal"></i>
+                      <span>Like</span>
+                  </div>
+                  <div class="react-type">
+                      <i class="bi bi-chat"></i>
+                      <span>Comment</span>
+                  </div>
+                  <div class="react-type">
+                      <i class="bi bi-share"></i>
+                      <span>Share</span>
+                  </div>
+                  <div class="react-type">
+                      <i class="bi bi-send"></i>
+                      <span>Send</span>
+                  </div>
               </div>
           </div>
-    </div>
-    <!-- post-preview-section -->
+      </div>
+  </div>
+</div>
+<script>
+document.getElementById("imageUpload").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("imagePreview").src = e.target.result;
+            document.getElementById("imagePreview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+async function searchImages() {
+    const query = document.getElementById("imageSearch").value;
+    if (!query) {
+        alert("Please enter a keyword");
+        return;
+    }
+
+    try {
+        const response = await fetch('/search_images', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        // Display first image result
+        if (data.photos.length > 0) {
+            const imageUrl = data.photos[0].src.large;
+            document.getElementById("imagePreview").src = imageUrl;
+            document.getElementById("imagePreview").style.display = "block";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to fetch images");
+    }
+}
+</script>
+
+<!-- post-preview-section -->
+
 
   
 

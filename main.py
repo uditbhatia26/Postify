@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, session, url_for, request, flash
+from flask import Flask, render_template, redirect, session, url_for, request, flash, jsonify
 from authlib.integrations.flask_client import OAuth
 import os
 from flask import request
 from config import post_generation_template
 from langchain_core.prompts import PromptTemplate
+from werkzeug.utils import secure_filename
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_groq import ChatGroq
 import requests
@@ -22,6 +23,11 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
 LINKEDIN_CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
 LINKEDIN_REDIRECT_URI = "http://localhost:5000/linkedin/callback"
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+
+UPLOAD_FOLDER = "static/uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize Search Tool
 search = DuckDuckGoSearchRun(name='Search')
@@ -199,6 +205,38 @@ def login():
 def logout():
     session.pop("user", None)
     return redirect("/")
+
+# ✅ Search Images (Pexels API)
+@app.route("/search_images", methods=["POST"])
+def search_images():
+    data = request.get_json()
+    query = data.get("query")
+
+    if not query:
+        return   ({"error": "Query is required"}), 400
+
+    url = f"https://api.pexels.com/v1/search?query={query}&per_page=8"
+    headers = {"Authorization": PEXELS_API_KEY}
+    response = requests.get(url, headers=headers)
+
+    return jsonify(response.json()) if response.status_code == 200 else jsonify({"error": "Failed to fetch images"}), 500
+
+# ✅ Upload Image
+@app.route("/upload_image", methods=["POST"])
+def upload_image():
+    if "image" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["image"]
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    file.save(file_path)
+
+    return jsonify({"image_url": f"/{file_path}"})
+
 
 @app.route("/generate_post", methods=["POST"])
 def generate_post():
