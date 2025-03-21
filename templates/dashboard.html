@@ -149,17 +149,18 @@
                 });
             </script>
             
-          </div>
-
-          <div class="container mt-3">
-            <!-- Hidden file input -->
-            <input type="file" id="pdfUpload" accept="application/pdf" class="d-none">
+            <div class="container mt-5 d-flex flex-column align-items-center">
+              <!-- Hidden file input -->
+              <input type="file" id="pdfUpload" accept="application/pdf" class="d-none">
+              
+              <!-- Custom Upload Button -->
+              <label for="pdfUpload" class="btn btn-primary">
+                <i class="bi bi-upload"></i> You can also add a PDF
+              </label>
             
-            <!-- Custom Upload Button -->
-            <label for="pdfUpload" class="btn btn-primary">
-              <i class="bi bi-upload"></i> Upload PDF
-            </label>
-          </div>
+              <!-- Display File Name -->
+              <p id="fileName" class="mt-2 text-muted"></p>
+            </div>
   
           <button type="submit" class="main-btn wow fadeInUp" data-wow-duration="1.3s" data-wow-delay="1.1s">
               Generate Post
@@ -172,6 +173,17 @@
       document.getElementById('customOption').addEventListener('change', function() {
           document.getElementById('customInput').disabled = !this.checked;
       });
+
+      document.getElementById("pdfUpload").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const fileNameElement = document.getElementById("fileName");
+
+    if (file) {
+      fileNameElement.textContent = `Selected File: ${file.name}`; // Display file name
+    } else {
+      fileNameElement.textContent = ""; // Clear if no file is selected
+    }
+  });
   </script>  
 
 
@@ -206,7 +218,7 @@
                   <textarea id="postInput" name="final_post_content" placeholder="Write something....">{% if post %}{{ post }}{% endif %}</textarea>
                   <div class="media">
                       <div style="display: flex; flex-direction: row; gap: 40px;">
-                          <button class="edit-button main-btn wow fadeInUp"><i class="bi bi-image"></i></button>
+                          <button class="edit-button main-btn wow fadeInUp" ><i class="bi bi-image"></i></button>
                       </div>
                       <button type="submit" class="edit-button main-btn wow fadeInUp">Post on LinkedIn</button>
                   </div>
