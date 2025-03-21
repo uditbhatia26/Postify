@@ -413,8 +413,8 @@ textarea:focus {
 }
 
 /* When the radio is checked, update the label style */
-.hidden-radio:checked + label {
-  background-color: #fe6e9a;
+.custom-radio:has(.hidden-radio:checked) label {
+  background-color: red;
   color: #fff;
   border-color: #fe6e9a;
 }
