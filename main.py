@@ -3,11 +3,17 @@ from authlib.integrations.flask_client import OAuth
 import os
 from flask import request
 from config import post_generation_template
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
+from langchain.vectorstores import FAISS
 from werkzeug.utils import secure_filename
+import tempfile
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_groq import ChatGroq
+from langchain_community.document_loaders import PyPDFLoader
 import requests
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.tools import Tool
 from langchain.agents import initialize_agent, AgentType
 from dotenv import load_dotenv
@@ -24,10 +30,42 @@ LINKEDIN_CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
 LINKEDIN_CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
 LINKEDIN_REDIRECT_URI = "http://localhost:5000/linkedin/callback"
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+embedding_model = HuggingFaceEmbeddings(model_name = 'all-MiniLM-L6-v2')
 
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route("/upload", methods=["POST"])
+def upload_pdf():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"error": "No file selected"}), 400
+
+    # Save file temporarily
+    temp_dir = tempfile.mkdtemp()
+    file_path = os.path.join(temp_dir, file.filename)
+    file.save(file_path)
+
+    # Process PDF
+    loader = PyPDFLoader(file_path)
+    pages = loader.load_and_split()
+
+    # Create vector store for retrieval
+    db = FAISS.from_documents(pages, embedding_model)
+    retriever = db.as_retriever()
+
+    # Use RAG pipeline to extract key insights
+    chain = RetrievalQA(llm=llm, retriever=retriever)
+    summary = chain.run("Summarize this document in key points for a LinkedIn post.")
+
+    return jsonify({"filename": file.filename, "summary": summary})
 
 # Initialize Search Tool
 search = DuckDuckGoSearchRun(name='Search')

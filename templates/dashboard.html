@@ -148,16 +148,60 @@
                     });
                 });
             </script>
-            
             <div class="container mt-5" style="display: flex; flex-direction: column; align-items: center;">
               <!-- Hidden file input -->
-              <input type="file" id="pdfUpload" accept="application/pdf" class="d-none">
+              <input type="file" id="pdfUpload" accept="application/pdf" class="d-none" onchange="updateFileName()">
               
               <!-- Custom Upload Button -->
               <label for="pdfUpload" class="btn btn-primary">
-                <i class="bi bi-upload"></i> You can also add a PDF 
+                <i class="bi bi-upload"></i> You can also add a PDF
               </label>
+            
+              <!-- File name display -->
+              <p id="fileName" style="margin-top: 10px; display: none;"></p>
+            
+              <!-- Upload Button -->
+              <button class="btn btn-success mt-2" onclick="uploadFile()">Upload</button>
             </div>
+            
+            <script>
+              function updateFileName() {
+                const fileInput = document.getElementById('pdfUpload');
+                const fileNameDisplay = document.getElementById('fileName');
+            
+                if (fileInput.files.length > 0) {
+                  fileNameDisplay.textContent = "Selected: " + fileInput.files[0].name;
+                  fileNameDisplay.style.display = "block";
+                } else {
+                  fileNameDisplay.style.display = "none";
+                }
+              }
+            
+              function uploadFile() {
+                const fileInput = document.getElementById('pdfUpload');
+                if (fileInput.files.length === 0) {
+                  alert("Please select a file first!");
+                  return;
+                }
+            
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append("file", file);
+            
+                fetch("http://127.0.0.1:5000/upload", {
+                  method: "POST",
+                  body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                  alert("File uploaded successfully: " + data.filename);
+                })
+                .catch(error => {
+                  console.error("Error:", error);
+                  alert("File upload failed!");
+                });
+              }
+            </script>            
           </div>
 
   
