@@ -25,16 +25,16 @@ LINKEDIN_REDIRECT_URI = "http://localhost:5000/linkedin/callback"
 
 # Initialize Search Tool
 search = DuckDuckGoSearchRun(name='Search')
-tools = [Tool.from_function(name="search_news", func=search.run, description="Search for news articles.")]
 
 # Initialize LLM
 llm = ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model="llama3-70b-8192")
 prompt = PromptTemplate(
-    input_variables=['user_input', 'writing_style'],
+    input_variables=['context','user_input', 'writing_style'],
     template=post_generation_template,
     validate_template=True
 )
-
+tools = [search]
+search_agent = initialize_agent(tools=tools, llm=llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)
 generation_chain = prompt | llm 
 
 oauth = OAuth(app)
@@ -204,10 +204,10 @@ def logout():
 def generate_post():
     user_input = request.form.get("user_input")
     writing_style = request.form.get("writing_style")
-    
+    web_responses = search_agent.invoke(user_input)
     if not user_input:
         return "No input provided", 400
-    post_content = generation_chain.invoke({"user_input": user_input, "writing_style": writing_style}).content
+    post_content = generation_chain.invoke({"context" : web_responses,"user_input": user_input, "writing_style": writing_style}).content
     session["generated_post"] = post_content
 
     return render_template("dashboard.html", user=session["user"], post=post_content)
