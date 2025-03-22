@@ -46,7 +46,6 @@ h6 {
 /* post-selection-section */
 
 .creation-container {
-  margin-top: 100px !important;
   display: flex;
   flex-direction: column;
   margin: 50px;
@@ -320,10 +319,11 @@ textarea:focus {
   border-radius: 10px;
   background-color: #1d2430;
   background-size: 200%;
-  padding-top: 100px;
+  padding-top: 20px;
   align-content: center;
   gap: 50px;
   transition: all 0.3s;
+  border: 1px solid #b9b9b9;
 }
 
 .sidebar .logo {
